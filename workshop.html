@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapLogic Training Guide for Data Analysts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        /* Custom scrollbar for code blocks */
+        pre::-webkit-scrollbar {
+            height: 8px;
+        }
+        pre::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        pre::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            background-color: white;
+        }
+        th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+        }
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        h2 {
+            scroll-margin-top: 5rem;
+        }
+        h3 {
+            scroll-margin-top: 4rem;
+        }
+        .step-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.375rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+            display: none; /* Hidden until loaded by JS dictionary */
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-200 selection:text-blue-900">
+
+    <!-- Top Navigation / Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">📊</span>
+                <h1 class="font-bold text-xl tracking-tight text-slate-800">SnapLogic Workshop</h1>
+            </div>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-slate-600">
+                <a href="#overview" class="hover:text-blue-600 transition-colors">Overview</a>
+                <a href="#steps" class="hover:text-blue-600 transition-colors">Steps</a>
+                <a href="#reference" class="hover:text-blue-600 transition-colors">Reference</a>
+                <a href="#troubleshooting" class="hover:text-blue-600 transition-colors">Troubleshooting</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row gap-10">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="hidden md:block w-64 shrink-0">
+            <div class="sticky top-24 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <h4 class="font-semibold text-slate-800 mb-4 uppercase tracking-wider text-xs">Table of Contents</h4>
+                <ul class="space-y-3 text-sm text-slate-600">
+                    <li><a href="#business-problem" class="hover:text-blue-600">The Business Problem</a></li>
+                    <li><a href="#what-were-building" class="hover:text-blue-600">What We're Building</a></li>
+                    <li><a href="#input-files" class="hover:text-blue-600">Input Files</a></li>
+                    <li>
+                        <a href="#steps" class="hover:text-blue-600 font-medium">Step-by-Step</a>
+                        <ul class="pl-4 mt-2 space-y-2 border-l border-slate-200 ml-1">
+                            <li><a href="#part-a" class="hover:text-blue-600">Part A: Read Data</a></li>
+                            <li><a href="#part-b" class="hover:text-blue-600">Part B: Rename & Combine</a></li>
+                            <li><a href="#part-c" class="hover:text-blue-600">Part C: Standardise FRN</a></li>
+                            <li><a href="#part-d" class="hover:text-blue-600">Part D: Join Firm Data</a></li>
+                            <li><a href="#part-e" class="hover:text-blue-600">Part E: Clean & Enrich</a></li>
+                            <li><a href="#part-f" class="hover:text-blue-600">Part F: Aggregate & Pivot</a></li>
+                            <li><a href="#part-g" class="hover:text-blue-600">Part G: Output to Excel</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#reference" class="hover:text-blue-600">Quick Reference</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <article class="flex-1 bg-white p-6 sm:p-10 rounded-2xl shadow-sm border border-slate-200">
+            
+            <header class="mb-10 text-center md:text-left">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">SnapLogic Training Guide for Data Analysts</h1>
+                <p class="text-lg text-slate-500 font-medium">From Tableau Prep to SnapLogic: Hands-On Workshop</p>
+            </header>
+
+            <div class="prose max-w-none text-slate-700">
+
+                <!-- Section: The Business Problem -->
+                <section id="business-problem" class="mb-12">
+                    <h2 class="text-2xl font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4 flex items-center gap-2">
+                        <span>🏢</span> The Business Problem
+                    </h2>
+                    <p class="mb-4">As data analysts, we regularly receive complaints data from multiple channels and in different formats (CSV, JSON). This data is often messy—Firm Reference Numbers (FRNs) are inconsistently formatted, product categories vary, and missing values are common. Furthermore, to make this data actionable, we need to cross-reference it with our official Salesforce Firm Master database.</p>
+                    <p>This workshop demonstrates how to automate what is traditionally a manual, error-prone data-prep process. We will build an automated data pipeline to unify these disparate sources, standardize formatting, handle missing values, and produce a clean, pivoted Excel report ready for regulatory analysis.</p>
+                </section>
+                
+                <!-- Section: What We're Building -->
+                <section id="what-were-building" class="mb-12">
+                    <h2 class="text-2xl font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4 flex items-center gap-2">
+                        <span>🎯</span> What We're Building
+                    </h2>
+                    <p class="mb-4">In this workshop, you'll build a pipeline that:</p>
+                    <ol class="list-decimal pl-6 space-y-2 mb-6 font-medium text-slate-800">
+                        <li><strong>Combines</strong> current complaints (CSV) with historical complaints (JSON)</li>
+                        <li><strong>Enriches</strong> data with firm details from Salesforce</li>
+                        <li><strong>Cleans</strong> messy data (inconsistent FRN formats, product names, nulls)</li>
+                        <li><strong>Outputs</strong> a pivoted summary showing complaints by firm and product type</li>
+                    </ol>
+
+                    <h3 class="text-lg font-semibold text-slate-800 mt-6 mb-2">Final Output</h3>
+                    
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6 text-center">
+                        <p class="text-sm text-slate-500 mb-2 italic">Insert your "what you'll be building" screenshot here</p>
+                        <img data-image-key="final_output" alt="Final Output Screenshot" class="max-w-full h-auto mx-auto rounded shadow-sm border border-slate-300 step-img mx-auto" style="display:block;">
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Firm_Name</th>
+                                    <th>Mortgage</th>
+                                    <th>Insurance</th>
+                                    <th>Investment</th>
+                                    <th>Pension</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>AVIVA INSURANCE LTD</td><td>0</td><td>4</td><td>0</td><td>0</td></tr>
+                                <tr><td>BARCLAYS BANK UK PLC</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+                                <tr><td>LLOYDS BANKING GROUP</td><td>2</td><td>1</td><td>0</td><td>0</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Section: Input Files -->
+                <section id="input-files" class="mb-12">
+                    <h2 class="text-2xl font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4 flex items-center gap-2">
+                        <span>📁</span> Input Files
+                    </h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>File</th>
+                                    <th>Format</th>
+                                    <th>Records</th>
+                                    <th>Contains</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code class="bg-slate-100 text-pink-600 px-1 py-0.5 rounded text-sm">Q1_2024_Complaints.csv</code></td><td>CSV</td><td>50</td><td>Current quarter complaints (messy data)</td></tr>
+                                <tr><td><code class="bg-slate-100 text-pink-600 px-1 py-0.5 rounded text-sm">Historical_Complaints.json</code></td><td>JSON</td><td>25</td><td>Previous quarters' complaints</td></tr>
+                                <tr><td><code class="bg-slate-100 text-pink-600 px-1 py-0.5 rounded text-sm">Salesforce_Firm_Master.csv</code></td><td>CSV</td><td>7</td><td>Official firm names and details</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 my-10">
+
+                <!-- Step-by-step Instructions -->
+                <section id="steps">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-8 flex items-center gap-2">
+                        <span>🛠️</span> Step-by-Step Instructions
+                    </h2>
+
+                    <!-- PART A -->
+                    <div id="part-a" class="mb-12">
+                        <h3 class="text-xl font-bold text-blue-700 bg-blue-50 py-2 px-4 rounded-md inline-block mb-6">PART A: Create Pipeline and Read Data (Steps 1-11)</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 1: Create New Pipeline</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Click <strong>+ New Pipeline</strong> in your project.</li>
+                                    <li>Enter a name like <code class="bg-slate-100 text-pink-600 px-1 py-0.5 rounded text-sm">YourName_FirstSteps</code>.</li>
+                                    <li>Click <strong>Save</strong>.</li>
+                                </ol>
+                                <img data-image-key="step1" alt="Create new pipeline" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 2-3: Open Snap Catalog</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Click the <strong>+</strong> icon in the toolbar to open the Snap catalog.</li>
+                                    <li>Search for <strong>File Reader</strong>.</li>
+                                </ol>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <img data-image-key="step2" alt="Open snaps catalog" class="step-img">
+                                    <img data-image-key="step3" alt="Find file reader" class="step-img">
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 4-5: Add File Reader for CSV</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Drag <strong>File Reader</strong> onto the canvas.</li>
+                                    <li>Double-click to open settings.</li>
+                                    <li>In <strong>File Path</strong>, enter: <code class="bg-slate-100 text-pink-600 px-1 py-0.5 rounded text-sm">Q1_2024_Complaints.csv</code></li>
+                                    <li>Click <strong>Save</strong>.</li>
+                                </ol>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <img data-image-key="step4" alt="Drag to canvas" class="step-img">
+                                    <img data-image-key="step5" alt="Find correct file" class="step-img">
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 6: Validate</h4>
+                                <p class="mt-2 text-slate-600">Click <strong>Save</strong> in the toolbar. Watch the snap turn green (valid).</p>
+                                <img data-image-key="step6" alt="Click save, watch it validate" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 7: Add CSV Parser</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Search for <strong>CSV Parser</strong> in the Snap catalog.</li>
+                                    <li>Drag it onto the canvas.</li>
+                                    <li><strong>Connect</strong> the File Reader's output (right side) to CSV Parser's input (left side).</li>
+                                    <li>Open CSV Parser - defaults are fine (Header: true).</li>
+                                </ol>
+                                <img data-image-key="step7" alt="Attach a CSV parser" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 8: Validate Pipeline</h4>
+                                <p class="mt-2 text-slate-600">Click the <strong>Validate</strong> button (checkmark icon) in the toolbar.</p>
+                                <img data-image-key="step8" alt="Press validate" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 9: Repeat for Other Files</h4>
+                                <p class="mt-2 text-slate-600">Add two more File Reader + Parser chains:</p>
+                                <ul class="list-disc pl-5 mt-2 space-y-2">
+                                    <li><strong>For Historical JSON:</strong>
+                                        <ul class="list-circle pl-5 mt-1 text-sm text-slate-600">
+                                            <li>File Reader1 → File Path: <code class="bg-slate-100 text-pink-600 px-1 py-0.5 rounded">Historical_Complaints.json</code></li>
+                                            <li>JSON Parser <em>(not CSV Parser!)</em> → Set <strong>Array Elements as Documents</strong>: <code class="bg-slate-100 text-pink-600 px-1 py-0.5 rounded">true</code></li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>For Salesforce CSV:</strong>
+                                        <ul class="list-circle pl-5 mt-1 text-sm text-slate-600">
+                                            <li>File Reader2 → File Path: <code class="bg-slate-100 text-pink-600 px-1 py-0.5 rounded">Salesforce_Firm_Master.csv</code></li>
+                                            <li>CSV Parser1</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <p class="mt-3 text-sm italic text-slate-500">(You should now have 3 File Readers, 2 CSV Parsers, and 1 JSON Parser - all green).</p>
+                                <img data-image-key="step9" alt="All snaps green" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 10-11: Preview Data</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Click the <strong>green circle</strong> on the right side of JSON Parser.</li>
+                                    <li>You'll see the data as a table.</li>
+                                    <li>Notice the <strong>lowercase column names</strong>: <code>complaint_id</code>, <code>firm_ref</code>, etc. This is our first problem to fix!</li>
+                                </ol>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <img data-image-key="step10" alt="Preview data icon" class="step-img">
+                                    <img data-image-key="step11" alt="Table with lowercase columns" class="step-img">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PART B -->
+                    <div id="part-b" class="mb-12">
+                        <h3 class="text-xl font-bold text-indigo-700 bg-indigo-50 py-2 px-4 rounded-md inline-block mb-6">PART B: Rename and Combine Data (Steps 12-16)</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 12-13: Add Rename Columns Mapper</h4>
+                                <p class="mt-2 text-slate-600">The JSON has lowercase columns (<code>complaint_id</code>) but the CSV has Title Case (<code>Complaint_ID</code>). We need to match them.</p>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Add a <strong>Mapper</strong> snap after JSON Parser.</li>
+                                    <li>Rename it to <strong>Rename Columns</strong>.</li>
+                                    <li>Configure the mapping table:</li>
+                                </ol>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                    <img data-image-key="step12" alt="Add mapper to json" class="step-img">
+                                    <img data-image-key="step13" alt="Drag and drop fields" class="step-img">
+                                </div>
+
+                                <div class="table-wrapper">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Expression</th>
+                                                <th>Target Path</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td><code class="text-sm bg-slate-100 px-1 rounded text-purple-700">$complaint_id</code></td><td><code class="text-sm bg-slate-100 px-1 rounded text-blue-700">Complaint_ID</code></td></tr>
+                                            <tr><td><code class="text-sm bg-slate-100 px-1 rounded text-purple-700">$firm_ref</code></td><td><code class="text-sm bg-slate-100 px-1 rounded text-blue-700">Firm_Ref</code></td></tr>
+                                            <tr><td><code class="text-sm bg-slate-100 px-1 rounded text-purple-700">$complaint_date</code></td><td><code class="text-sm bg-slate-100 px-1 rounded text-blue-700">Complaint_Date</code></td></tr>
+                                            <tr><td><code class="text-sm bg-slate-100 px-1 rounded text-purple-700">$product_type</code></td><td><code class="text-sm bg-slate-100 px-1 rounded text-blue-700">Product_Type</code></td></tr>
+                                            <tr><td><code class="text-sm bg-slate-100 px-1 rounded text-purple-700">$redress_amount</code></td><td><code class="text-sm bg-slate-100 px-1 rounded text-blue-700">Redress_Amount</code></td></tr>
+                                            <tr><td><code class="text-sm bg-slate-100 px-1 rounded text-purple-700">$status</code></td><td><code class="text-sm bg-slate-100 px-1 rounded text-blue-700">Status</code></td></tr>
+                                            <tr><td><code class="text-sm bg-slate-100 px-1 rounded text-purple-700">$days_open</code></td><td><code class="text-sm bg-slate-100 px-1 rounded text-blue-700">Days_Open</code></td></tr>
+                                            <tr><td><code class="text-sm bg-slate-100 px-1 rounded text-purple-700">$complaint_text</code></td><td><code class="text-sm bg-slate-100 px-1 rounded text-blue-700">Complaint_Text</code></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r mt-4">
+                                    <p class="text-amber-800 text-sm"><strong>💡 Tip:</strong> You can drag fields from the left Input Schema panel and rename them on the right.</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 14: Add Union</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Add a <strong>Union</strong> snap.</li>
+                                    <li>Connect <strong>both</strong> streams to it:
+                                        <ul class="list-circle pl-5 mt-1">
+                                            <li>CSV Parser output → Union <code>input0</code></li>
+                                            <li>Rename Columns output → Union <code>input1</code></li>
+                                        </ul>
+                                    </li>
+                                </ol>
+                                <p class="mt-2 text-sm italic text-slate-500">(The Union stacks both datasets into one).</p>
+                                <img data-image-key="step14" alt="Add a union" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 15: Preview Union - Spot the Duplicates!</h4>
+                                <p class="mt-2 text-slate-600">Preview the Union output. You'll notice some complaints appear twice (e.g., CMP-000905). We added the same record to both files for training purposes.</p>
+                                <img data-image-key="step15" alt="Spot the duplicates" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 16: Add Deduplicate</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Add a <strong>Deduplicate</strong> snap after Union.</li>
+                                    <li>Configure:
+                                        <ul class="list-circle pl-5 mt-1">
+                                            <li>Click the <strong>speech bubble icon</strong> to get field suggestions.</li>
+                                            <li>Add <code class="bg-slate-100 text-purple-700 px-1 py-0.5 rounded text-sm">$Firm_Ref</code> as the matching field.</li>
+                                            <li>Comparator: <code>Levenshtein</code></li>
+                                            <li>Threshold: <code>0.8</code></li>
+                                        </ul>
+                                    </li>
+                                </ol>
+                                <img data-image-key="step16" alt="Add deduplicate snap" class="step-img">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PART C -->
+                    <div id="part-c" class="mb-12">
+                        <h3 class="text-xl font-bold text-emerald-700 bg-emerald-50 py-2 px-4 rounded-md inline-block mb-6">PART C: Standardise FRN Format (Step 17)</h3>
+                        
+                        <div>
+                            <h4 class="font-semibold text-slate-800 text-lg">Step 17: Add Mapper1 (FRN Cleanup)</h4>
+                            <p class="mt-2 text-slate-600">Our FRN data is messy: <code class="bg-slate-100 px-1 rounded">"FRN-123456"</code>, <code class="bg-slate-100 px-1 rounded">"frn-789012"</code>, <code class="bg-slate-100 px-1 rounded">"123456"</code>, <code class="bg-slate-100 px-1 rounded">"FRN 789012"</code>.</p>
+                            <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                <li>Add a <strong>Mapper</strong> snap after Deduplicate.</li>
+                                <li>Rename it to <strong>Mapper1</strong>.</li>
+                                <li><strong>Check "Pass through"</strong> ☑️ <em>(keeps all other fields)</em>.</li>
+                                <li>Add this mapping:</li>
+                            </ol>
+
+                            <img data-image-key="step17" alt="Mapper standardise FRN" class="step-img">
+
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Expression</th>
+                                            <th>Target Path</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code class="text-sm bg-slate-100 px-1 py-0.5 rounded text-purple-700 font-mono break-all">'FRN-' + $Firm_Ref.replace(/^FRN-?/i, '').replace(/[-\s]/g, '').toUpperCase()</code></td>
+                                            <td><code class="text-sm bg-slate-100 px-1 rounded text-blue-700">$Firm_Ref</code></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r mt-4">
+                                <p class="text-indigo-900 text-sm"><strong>✨ Or use SnapGPT!</strong> Click the SnapGPT icon and enter:<br>
+                                <em class="block mt-1 font-medium text-indigo-800">"Standardise Firm_Ref to format FRN-XXXXXX. Remove any existing FRN prefix (case insensitive), remove all dashes and spaces, convert to uppercase, then add FRN- prefix at the start"</em></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PART D -->
+                    <div id="part-d" class="mb-12">
+                        <h3 class="text-xl font-bold text-orange-700 bg-orange-50 py-2 px-4 rounded-md inline-block mb-6">PART D: Join with Firm Data (Steps 18-21)</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 18: Add Sort Snaps</h4>
+                                <p class="mt-2 text-slate-600">For the Join to work efficiently, both streams need to be sorted by the join key.</p>
+                                <ul class="list-disc pl-5 mt-2 space-y-2">
+                                    <li><strong>Sort for complaints:</strong> Add a <strong>Sort</strong> snap after Mapper1. Sort by <code class="bg-slate-100 px-1 rounded text-purple-700 text-sm">$Firm_Ref</code> (Ascending).</li>
+                                    <li><strong>Sort1 for Salesforce:</strong> Add a <strong>Sort</strong> snap after CSV Parser1. Rename it to <strong>Sort1</strong>. Sort by <code class="bg-slate-100 px-1 rounded text-purple-700 text-sm">$FRN__c</code> (Ascending).</li>
+                                </ul>
+                                <img data-image-key="step18" alt="Add sort to pipeline" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 19-20: Add Join</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Add a <strong>Join</strong> snap.</li>
+                                    <li>Connect <strong>both</strong> sorted streams:
+                                        <ul class="list-circle pl-5 mt-1">
+                                            <li>Sort output → Join <code>input0</code></li>
+                                            <li>Sort1 output → Join <code>input1</code></li>
+                                        </ul>
+                                    </li>
+                                    <li>Configure:
+                                        <ul class="list-circle pl-5 mt-1">
+                                            <li><strong>Join Type</strong>: <code>Left outer</code></li>
+                                            <li><strong>Left Path</strong>: <code class="bg-slate-100 px-1 rounded text-purple-700 text-sm">$Firm_Ref</code></li>
+                                            <li><strong>Right Path</strong>: <code class="bg-slate-100 px-1 rounded text-purple-700 text-sm">$FRN__c</code></li>
+                                        </ul>
+                                    </li>
+                                </ol>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <img data-image-key="step19" alt="Add join, connect pipelines" class="step-img">
+                                    <img data-image-key="step20" alt="Configure join paths" class="step-img">
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 21: Preview Combined Data</h4>
+                                <p class="mt-2 text-slate-600">Preview the Join output. You should now see complaint fields AND firm fields (<code>Firm_Name__c</code>, <code>Firm_Type__c</code>, <code>Region__c</code>) together!</p>
+                                <img data-image-key="step21" alt="Preview combined dataset" class="step-img">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PART E -->
+                    <div id="part-e" class="mb-12">
+                        <h3 class="text-xl font-bold text-rose-700 bg-rose-50 py-2 px-4 rounded-md inline-block mb-6">PART E: Clean and Enrich Data (Steps 22-23)</h3>
+                        
+                        <div>
+                            <h4 class="font-semibold text-slate-800 text-lg">Step 22: Add Mapper2 (The Big Cleanup)</h4>
+                            <p class="mt-2 text-slate-600">This is where we clean everything. Add a <strong>Mapper</strong> snap after Join.</p>
+                            <p class="mt-1 text-red-600 font-medium text-sm">⚠️ Important: Do NOT check "Pass through" - we want to control exactly what comes out.</p>
+
+                            <img data-image-key="step22" alt="Configure mapper with fields" class="step-img">
+
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Expression</th>
+                                            <th>Target Path</th>
+                                            <th>What it does</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-sm">
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded">$Complaint_ID</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">$Complaint_ID</code></td>
+                                            <td class="text-slate-500">Pass through</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded">$Firm_Ref</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">FRN</code></td>
+                                            <td class="text-slate-500">Rename</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded">$Firm_Name__c == null ? 'UNKNOWN FIRM' : $Firm_Name__c.toUpperCase()</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Firm_Name</code></td>
+                                            <td class="text-slate-500">Handle nulls, uppercase</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded">$Firm_Type__c == null ? 'Unknown' : $Firm_Type__c</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Firm_Type</code></td>
+                                            <td class="text-slate-500">Handle nulls</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded">$Region__c == null ? 'Unknown' : $Region__c</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Region</code></td>
+                                            <td class="text-slate-500">Handle nulls</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded">Date.parse($Complaint_Date)</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Complaint_Date</code></td>
+                                            <td class="text-slate-500">Parse as date</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded font-mono break-all">'Q' + Math.ceil(Date.parse($Complaint_Date).getMonth() / 3) + '-' + Date.parse($Complaint_Date).getFullYear()</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Quarter</code></td>
+                                            <td class="text-slate-500">Create Q1-2024 format</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded font-mono break-all">({'mortgage': 'Mortgage', 'insurance': 'Insurance', 'pension': 'Pension', 'investment': 'Investment'}[$Product_Type.toLowerCase()] || 'Other')</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Product_Type</code></td>
+                                            <td class="text-slate-500">Standardise Title Case</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded">$Redress_Amount == null ? 0 : $Redress_Amount</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Redress_Amount</code></td>
+                                            <td class="text-slate-500">Null to zero</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded font-mono break-all">($Redress_Amount == 0) ? 'No Redress' : (($Redress_Amount < 500) ? 'Under £500' : (($Redress_Amount < 2000) ? 'Under £2000' : '£2000+'))</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Redress_Band</code></td>
+                                            <td class="text-slate-500">Create bands</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded">$Status</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Status</code></td>
+                                            <td class="text-slate-500">Pass through</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded">$Days_Open == null ? 0 : $Days_Open</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Days_Open</code></td>
+                                            <td class="text-slate-500">Null to zero</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="text-purple-700 bg-slate-100 px-1 rounded">($Days_Open <= 14) ? 'Fast' : (($Days_Open <= 30) ? 'Standard' : 'Slow')</code></td>
+                                            <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Resolution_Speed</code></td>
+                                            <td class="text-slate-500">Categorise speed</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r mt-4">
+                                <p class="text-indigo-900 text-sm mb-2"><strong>✨ SnapGPT Prompts for complex expressions:</strong></p>
+                                <ul class="list-disc pl-5 text-sm text-indigo-800 space-y-1">
+                                    <li><strong>Quarter:</strong> <em>"Create a Quarter field from Complaint_Date in format Q1-2024"</em></li>
+                                    <li><strong>Product Type:</strong> <em>"Standardise Product_Type to Title Case: mortgage→Mortgage, insurance→Insurance, pension→Pension, investment→Investment, anything else→Other"</em></li>
+                                    <li><strong>Resolution Speed:</strong> <em>"Create Resolution_Speed: 14 days or less is 'Fast', 15-30 is 'Standard', over 30 is 'Slow'"</em></li>
+                                </ul>
+                            </div>
+                            
+                            <h4 class="font-semibold text-slate-800 text-lg mt-8">Step 23: Preview Clean Data</h4>
+                            <p class="mt-2 text-slate-600">Preview Mapper2 output. You should see a beautiful, clean dataset!</p>
+                            <img data-image-key="step23" alt="Preview clean report" class="step-img">
+                        </div>
+                    </div>
+
+                    <!-- PART F -->
+                    <div id="part-f" class="mb-12">
+                        <h3 class="text-xl font-bold text-teal-700 bg-teal-50 py-2 px-4 rounded-md inline-block mb-6">PART F: Aggregate and Pivot (Steps 24-28)</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 24: Add Aggregate</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Add an <strong>Aggregate</strong> snap after Mapper2.</li>
+                                    <li>Configure <strong>Group By Fields</strong>: <code class="bg-slate-100 px-1 text-purple-700 rounded text-sm">$Firm_Name</code> and <code class="bg-slate-100 px-1 text-purple-700 rounded text-sm">$Product_Type</code>.</li>
+                                    <li>Configure <strong>Aggregate Fields</strong>: Function <code>COUNT</code> on <code class="bg-slate-100 px-1 text-purple-700 rounded text-sm">$Firm_Name</code> → Result Field <code class="bg-slate-100 px-1 text-blue-700 rounded text-sm">Total_Complaints</code>.</li>
+                                </ol>
+                                <img data-image-key="step24" alt="Add aggregate snap" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 25: Add Sort2</h4>
+                                <p class="mt-2 text-slate-600">Add a <strong>Sort</strong> snap after Aggregate. Sort by <code class="bg-slate-100 px-1 text-purple-700 rounded text-sm">$Firm_Name</code> (Ascending) and <code class="bg-slate-100 px-1 text-purple-700 rounded text-sm">$Product_Type</code> (Ascending).</p>
+                                <img data-image-key="step25" alt="Sort by firm name and product type" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 26: Add Group By Fields</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Add a <strong>Group By Fields</strong> snap.</li>
+                                    <li>Configure <strong>Fields</strong>: <code class="bg-slate-100 px-1 text-purple-700 rounded text-sm">$Firm_Name</code>.</li>
+                                    <li>Configure <strong>Target Field</strong>: <code class="bg-slate-100 px-1 text-blue-700 rounded text-sm">Firm_Results</code>.<br>
+                                    <span class="text-sm italic text-slate-500">(This groups all product type rows for each firm into an array).</span></li>
+                                </ol>
+                                <img data-image-key="step26" alt="Group by fields" class="step-img">
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 27: Add Mapper3 (Pivot)</h4>
+                                <p class="mt-2 text-slate-600">Now we pivot rows into columns - one column per product type. Add a <strong>Mapper</strong> snap and configure:</p>
+
+                                <img data-image-key="step27" alt="Mapper for pivoted table" class="step-img">
+
+                                <div class="table-wrapper">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Expression</th>
+                                                <th>Target Path</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-sm">
+                                            <tr>
+                                                <td><code class="text-purple-700 bg-slate-100 px-1 rounded">$groupBy.Firm_Name</code></td>
+                                                <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Firm_Name</code></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code class="text-purple-700 bg-slate-100 px-1 rounded font-mono break-all">$Firm_Results.filter(item => item.Product_Type == 'Mortgage').reduce((sum, item) => sum + item.Total_Complaints, 0)</code></td>
+                                                <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Mortgage</code></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code class="text-purple-700 bg-slate-100 px-1 rounded font-mono break-all">$Firm_Results.filter(item => item.Product_Type == 'Insurance').reduce((sum, item) => sum + item.Total_Complaints, 0)</code></td>
+                                                <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Insurance</code></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code class="text-purple-700 bg-slate-100 px-1 rounded font-mono break-all">$Firm_Results.filter(item => item.Product_Type == 'Investment').reduce((sum, item) => sum + item.Total_Complaints, 0)</code></td>
+                                                <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Investment</code></td>
+                                            </tr>
+                                            <tr>
+                                                <td><code class="text-purple-700 bg-slate-100 px-1 rounded font-mono break-all">$Firm_Results.filter(item => item.Product_Type == 'Pension').reduce((sum, item) => sum + item.Total_Complaints, 0)</code></td>
+                                                <td><code class="text-blue-700 bg-slate-100 px-1 rounded">Pension</code></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r mt-4">
+                                    <p class="text-indigo-900 text-sm"><strong>✨ SnapGPT Prompt:</strong><br>
+                                    <em class="font-medium text-indigo-800">"Sum Total_Complaints for all items in Firm_Results where Product_Type equals 'Mortgage'"</em> (Then copy/modify for Insurance, Investment, Pension).</p>
+                                </div>
+                                
+                                <h4 class="font-semibold text-slate-800 text-lg mt-8">Step 28: Preview Final Output</h4>
+                                <p class="mt-2 text-slate-600">Preview Mapper3. You should see the pivoted table with firms as rows and product types as columns!</p>
+                                <img data-image-key="step28" alt="Open final preview" class="step-img">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PART G -->
+                    <div id="part-g" class="mb-12">
+                        <h3 class="text-xl font-bold text-fuchsia-700 bg-fuchsia-50 py-2 px-4 rounded-md inline-block mb-6">PART G: Output to Excel (Steps 29-32)</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 29-30: Add Output Formatters</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Add an <strong>Excel Formatter</strong> snap (defaults are fine).</li>
+                                    <li>Add a <strong>File Writer</strong> snap. Configure <strong>File Path</strong>: <code class="bg-slate-100 px-1 rounded text-pink-600 text-sm">YourName_Result.xlsx</code></li>
+                                </ol>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                    <img data-image-key="step29" alt="Add excel formatter" class="step-img">
+                                    <img data-image-key="step30" alt="Add file writer" class="step-img">
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 31-32: Execute and Verify</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Click <strong>Execute</strong> (play button) in the toolbar to run the full pipeline.</li>
+                                    <li>All snaps should turn green. Your Excel file is now created!</li>
+                                </ol>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                    <img data-image-key="step31" alt="Press execute" class="step-img">
+                                    <img data-image-key="step32" alt="Executed pipeline" class="step-img">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PART G -->
+                    <div id="part-g" class="mb-12">
+                        <h3 class="text-xl font-bold text-fuchsia-700 bg-fuchsia-50 py-2 px-4 rounded-md inline-block mb-6">PART G: Output to Excel (Steps 29-32)</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 29-30: Add Output Formatters</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Add an <strong>Excel Formatter</strong> snap (defaults are fine).</li>
+                                    <li>Add a <strong>File Writer</strong> snap. Configure <strong>File Path</strong>: <code class="bg-slate-100 px-1 rounded text-pink-600 text-sm">YourName_Result.xlsx</code></li>
+                                </ol>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold text-slate-800 text-lg">Step 31-32: Execute and Verify</h4>
+                                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                    <li>Click <strong>Execute</strong> (play button) in the toolbar to run the full pipeline.</li>
+                                    <li>All snaps should turn green. Your Excel file is now created!</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 my-10">
+
+                <!-- Reference Section -->
+                <section id="reference" class="mb-16">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-8 flex items-center gap-2">
+                        <span>📘</span> Quick Reference Cards
+                    </h2>
+
+                    <h3 class="text-xl font-semibold text-slate-800 mb-4">Expression Reference</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-slate-50 border border-slate-200 p-5 rounded-lg">
+                            <h4 class="font-bold text-slate-700 mb-3 uppercase tracking-wider text-xs">String Transformations</h4>
+                            <ul class="space-y-4 text-sm">
+                                <li>
+                                    <strong>Uppercase:</strong> <code class="text-purple-700 bg-white border border-slate-200 px-1 rounded">$Field.toUpperCase()</code>
+                                    <p class="text-slate-500 mt-1 italic block text-xs">SnapGPT: "Convert Field to uppercase"</p>
+                                </li>
+                                <li>
+                                    <strong>Replace text:</strong> <code class="text-purple-700 bg-white border border-slate-200 px-1 rounded">$Field.replace('old', 'new')</code>
+                                    <p class="text-slate-500 mt-1 italic block text-xs">SnapGPT: "Replace 'old' with 'new' in Field"</p>
+                                </li>
+                                <li>
+                                    <strong>Regex replace:</strong> <code class="text-purple-700 bg-white border border-slate-200 px-1 rounded">$Field.replace(/pattern/g, '')</code>
+                                    <p class="text-slate-500 mt-1 italic block text-xs">SnapGPT: "Remove all dashes and spaces from Field"</p>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200 p-5 rounded-lg">
+                            <h4 class="font-bold text-slate-700 mb-3 uppercase tracking-wider text-xs">Null Handling & Logic</h4>
+                            <ul class="space-y-4 text-sm">
+                                <li>
+                                    <strong>Default if null:</strong> <code class="text-purple-700 bg-white border border-slate-200 px-1 rounded">$Field == null ? 'Default' : $Field</code>
+                                    <p class="text-slate-500 mt-1 italic block text-xs">SnapGPT: "If Field is null, use 'Default'"</p>
+                                </li>
+                                <li>
+                                    <strong>Nested IF:</strong> <code class="text-purple-700 bg-white border border-slate-200 px-1 rounded">$A > 100 ? 'High' : ($A > 50 ? 'Med' : 'Low')</code>
+                                    <p class="text-slate-500 mt-1 italic block text-xs">SnapGPT: "Categorise: over 100 High, 51-100 Med, else Low"</p>
+                                </li>
+                                <li>
+                                    <strong>Lookups:</strong> <code class="text-purple-700 bg-white border border-slate-200 px-1 rounded">({'a': 'Apple'}[$Field] || 'Other')</code>
+                                    <p class="text-slate-500 mt-1 italic block text-xs">SnapGPT: "Map 'a' to 'Apple', anything else to 'Other'"</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-slate-800 mb-4">Tool & Snap Cheat Sheet</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Task / Tool</th>
+                                    <th>SnapLogic Solution</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Read CSV / JSON</strong></td><td>File Reader + CSV Parser / JSON Parser</td></tr>
+                                <tr><td><strong>Transform Data</strong></td><td>Mapper</td></tr>
+                                <tr><td><strong>Combine Rows</strong></td><td>Union</td></tr>
+                                <tr><td><strong>Join Tables</strong></td><td>Sort both streams + Join</td></tr>
+                                <tr><td><strong>Pivot Data</strong></td><td>Group By Fields + Mapper</td></tr>
+                                <tr><td><strong>Save Button</strong></td><td>Validates and saves pipeline (checks for errors)</td></tr>
+                                <tr><td><strong>Execute Button</strong></td><td>Runs the full pipeline (play icon)</td></tr>
+                                <tr><td><strong>Preview</strong></td><td>Green circle on snap's right side</td></tr>
+                                <tr><td><strong>Mapper "Pass through"</strong></td><td>Keeps all input fields, adds/modifies specified ones</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 my-10">
+
+                <!-- Troubleshooting -->
+                <section id="troubleshooting" class="mb-12">
+                    <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-200 pb-2 mb-4 flex items-center gap-2">
+                        <span>🛠️</span> Troubleshooting
+                    </h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Problem</th>
+                                    <th>Solution</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Snap is red/yellow</strong></td>
+                                    <td>Click to open, check error message, verify file paths.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Join returns empty</strong></td>
+                                    <td>Check both Sort snaps use the correct field names.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nulls in output</strong></td>
+                                    <td>Add null handling in Mapper: <code class="bg-slate-100 px-1 rounded text-sm text-purple-700">$Field == null ? 'Default' : $Field</code>.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Wrong column names</strong></td>
+                                    <td>Check Rename Columns mapper has correct mappings.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Pivot shows zeros</strong></td>
+                                    <td>Verify Product_Type spelling matches exactly (case-sensitive).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Next Steps -->
+                <section id="next-steps" class="mb-8">
+                    <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-200 pb-2 mb-4 flex items-center gap-2">
+                        <span>🚀</span> Next Steps
+                    </h2>
+                    <ol class="list-decimal pl-6 space-y-2 mb-6 text-slate-700">
+                        <li>Try modifying the pipeline to add more aggregations (e.g., SUM of <code class="bg-slate-100 text-pink-600 px-1 rounded text-sm">Redress_Amount</code>).</li>
+                        <li>Add a Filter snap to only include "Upheld" complaints.</li>
+                        <li>Create a second output branch for a different summary view.</li>
+                    </ol>
+                    <div class="bg-blue-50 text-blue-900 p-4 rounded text-center font-medium mt-8 border border-blue-100">
+                        Questions? Contact the Data Engineering team.
+                    </div>
+                </section>
+
+            </div>
+        </article>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-sm">
+        <p>SnapLogic Workshop Guide • Created for Data Analysts</p>
+    </footer>
+
+    <!-- Smooth Scrolling Script -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // --- Image Dictionary Setup ---
+        // Just update the filenames here if they ever change
+        const imageDictionary = {
+            "final_output": "final_output.png",
+            "step1": "step 1 - create new pipeline.png",
+            "step2": "step 2 - opens snaps catalog.png",
+            "step3": "step 3 - find file reader.png",
+            "step4": "step 4 - drag to canvas and open.png",
+            "step5": "step 5 - find correct file.png",
+            "step6": "step 6 - click save, watch it validate.png",
+            "step7": "step 7 - attach a csv parser, make sure it connects, repeat 2-6 with other snaps.png",
+            "step8": "step 8 - look at toolbar, press validate.png",
+            "step9": "step 9 - should see 3 file readers, 2 csv parsers and 1 json all green.png",
+            "step10": "step 10 - press the green icon on a snap's right to preview data.png",
+            "step11": "step 11 - see data represented as a table, lowercase col names.png",
+            "step12": "step 12 - first cleanup - add a mapper to the json one.png",
+            "step13": "step 13 - enter:drag & drop fields from left, write new column names on the right inside mapper .png",
+            "step14": "step 14 - add a union.png",
+            "step15": "step 15 - open union, see CMP-000905 duplicates.png",
+            "step16": "step 16 - add deduplicate snap, add $Firm_Ref as matching criteria (use the speech bubble automated suggestions to find it).png",
+            "step17": "step 17 - add a mapper, standardise frn via snapgpt or expressioon copy paste, set passthrough.png",
+            "step18": "step 18 - add sort to the pipeline by $Firm_Ref, leave as global:ascending, repeat for the csv parser we haven't worked on yet (salesforce data) by FRN__c.png",
+            "step19": "step 19 - add a join, connect the two pipelinees + screenshot of pipeline so far.png",
+            "step20": "step 20 - configure left and right paths and join type.png",
+            "step21": "step 21 - preview data for combined dataset.png",
+            "step22": "step 22 - configure mapper with a lot of fields, either copy the snapgpt query (but verify the result, may need to retry) or copy paste the expression.png",
+            "step23": "step 23 - preview data, nice clean report.png",
+            "step24": "step 24 - add Aggregate snap, group by Firm_Name and Prooduct_Type, aggregate Firm_Name as Total_Complaints Count function.png",
+            "step25": "step 25 - add sort by firm name and product type.png",
+            "step26": "step 26 - add group by fields, group by Firm_Name as Firm_Results .png",
+            "step27": "step 27 - add mapper for pivoted table, take firm name, use snapgpt for product type expressions, use for one and copy + update the others or copy paste from doc.png",
+            "step28": "step 28 - open final preview.png",
+            "step29": "step 29 - add excel formatter, leave as is.png",
+            "step30": "step 30 - add file writer, name it yourname_result.xlsx or something similar.png",
+            "step31": "step 31 - press execute so it performs a write-level activity.png",
+            "step32": "step 32 - screenshot of green executed pipeline so far.png"
+        };
+
+        // Inject images dynamically on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('img[data-image-key]').forEach(img => {
+                const key = img.getAttribute('data-image-key');
+                if (imageDictionary[key]) {
+                    img.src = imageDictionary[key];
+                    img.style.display = 'block'; // Reveal image once URL is set
+                }
+            });
+        });
+    </script>
+</body>
+</html>
